@@ -1,0 +1,28 @@
+# OS / editor junk
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
+*.swp
+*~
+
+# Agent / tooling state
+.claude/
+
+# Dependencies & build output (none are required, but keep them out if added)
+node_modules/
+dist/
+build/
+.cache/
+
+# Local environment / credentials
+# js/config.js ships with a placeholder and is committed. If you keep a real
+# key in a local override file instead, it is ignored here.
+.env
+.env.local
+js/config.local.js
+
+# Raw Stitch export — design source, kept out of the repo because it is ~9 MB
+# of PNG screens. The extracted token spec lives in design/DESIGN.md.
+stitch-export/

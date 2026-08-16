@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <title>CineScope — Movie Discovery</title>
+    <meta
+      name="description"
+      content="CineScope is a cinematic movie discovery app: browse trending, popular, top rated and upcoming films, search the catalogue, and keep your own watchlist."
+    />
+    <meta name="color-scheme" content="dark light" />
+    <meta name="theme-color" content="#0a0a0b" />
+
+    <!--
+  Applied before first paint so the stored theme never flashes.
+  Kept inline and dependency-free on purpose.
+-->
+    <script>
+      (function () {
+        try {
+          var stored = localStorage.getItem("cinescope:theme");
+          if (stored !== "light" && stored !== "dark") {
+            stored = window.matchMedia("(prefers-color-scheme: light)").matches
+              ? "light"
+              : "dark";
+          }
+          document.documentElement.setAttribute("data-theme", stored);
+        } catch (e) {
+          document.documentElement.setAttribute("data-theme", "dark");
+        }
+      })();
+    </script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://image.tmdb.org" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0..1,0&icon_names=add,add_circle,arrow_back,bookmark_add,bookmarks,calendar_month,calendar_today,check,chevron_left,chevron_right,close,dark_mode,error,event_upcoming,explore,filter_list,format_list_bulleted,home,image_not_supported,light_mode,local_fire_department,menu,military_tech,movie,person,play_arrow,play_circle,refresh,remove,schedule,search,sort,star,tune,videocam_off&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="css/styles.css" />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230a0a0b'/%3E%3Ctext x='16' y='23' font-family='Inter,sans-serif' font-size='20' font-weight='800' fill='%23e50914' text-anchor='middle'%3EC%3C/text%3E%3C/svg%3E"
+    />
+  </head>
+
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    <!-- ── Top navigation ─────────────────────────────────────────────── -->
+    <header class="topnav" id="topnav">
+      <div class="topnav__left">
+        <a class="brand" href="#/" aria-label="CineScope, go to home"
+          >CineScope</a
+        >
+        <nav class="navlinks" id="navlinks" aria-label="Primary">
+          <a class="navlink" href="#/">Home</a>
+          <a class="navlink" href="#/discover">Discover</a>
+          <a class="navlink" href="#/genres">Genres</a>
+          <a class="navlink" href="#/my-list">My List</a>
+        </nav>
+      </div>
+
+      <div class="topnav__actions">
+        <form class="navsearch" id="nav-search-form" role="search">
+          <span class="icon navsearch__icon" aria-hidden="true">search</span>
+          <label class="visually-hidden" for="nav-search-input"
+            >Search movies</label
+          >
+          <input
+            class="navsearch__input"
+            id="nav-search-input"
+            type="search"
+            name="q"
+            placeholder="Search movies, genres…"
+            autocomplete="off"
+          />
+        </form>
+
+        <button
+          class="icon-btn"
+          id="mobile-search-btn"
+          type="button"
+          aria-label="Search movies"
+        >
+          <span class="icon" aria-hidden="true">search</span>
+        </button>
+
+        <button
+          class="icon-btn"
+          id="theme-toggle"
+          type="button"
+          aria-label="Switch to light theme"
+        >
+          <span class="icon" id="theme-icon" aria-hidden="true">dark_mode</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- ── Routed view ────────────────────────────────────────────────── -->
+    <main class="page" id="main" tabindex="-1"></main>
+
+    <!-- ── Footer ─────────────────────────────────────────────────────── -->
+    <footer class="footer">
+      <div class="footer__inner">
+        <div class="footer__brand">CineScope</div>
+        <nav class="footer__links t-body-sm" aria-label="Footer">
+          <a href="#/discover">Discover</a>
+          <a href="#/genres">Genres</a>
+          <a href="#/my-list">My List</a>
+          <a
+            href="https://www.themoviedb.org/"
+            target="_blank"
+            rel="noopener noreferrer"
+            >Data by TMDB</a
+          >
+        </nav>
+        <p class="footer__note t-body-sm">
+          This product uses the TMDB API but is not endorsed or certified by
+          TMDB.
+        </p>
+      </div>
+    </footer>
+
+    <!-- ── Mobile bottom navigation ───────────────────────────────────── -->
+    <nav class="bottomnav" id="bottomnav" aria-label="Primary mobile">
+      <a class="bottomnav__item" href="#/">
+        <span class="icon" aria-hidden="true">home</span>
+        <span>Home</span>
+      </a>
+      <a class="bottomnav__item" href="#/discover">
+        <span class="icon" aria-hidden="true">explore</span>
+        <span>Discover</span>
+      </a>
+      <a class="bottomnav__item" href="#/my-list">
+        <span class="icon" aria-hidden="true">format_list_bulleted</span>
+        <span>My List</span>
+      </a>
+    </nav>
+
+    <!-- ── Trailer modal ──────────────────────────────────────────────── -->
+    <div
+      class="modal"
+      id="trailer-modal"
+      data-open="false"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="trailer-modal-title"
+      hidden
+    >
+      <div class="modal__dialog" id="trailer-dialog">
+        <div class="modal__head">
+          <h2 class="t-headline modal__title" id="trailer-modal-title">
+            Trailer
+          </h2>
+          <button
+            class="modal__close"
+            id="trailer-close"
+            type="button"
+            aria-label="Close trailer"
+          >
+            <span class="icon" aria-hidden="true">close</span>
+          </button>
+        </div>
+        <div class="modal__video" id="trailer-video"></div>
+        <div class="modal__foot">
+          <div class="modal__badges" id="trailer-badges"></div>
+          <button
+            class="btn btn--ghost btn--sm"
+            id="trailer-watchlist"
+            type="button"
+          >
+            <span class="icon icon--sm" aria-hidden="true">add</span>
+            <span>Watchlist</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Mobile filter drawer ───────────────────────────────────────── -->
+    <div
+      class="drawer"
+      id="filter-drawer"
+      data-open="false"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="filter-drawer-title"
+      hidden
+    >
+      <div class="drawer__scrim" data-drawer-dismiss></div>
+      <div class="drawer__panel" id="filter-panel">
+        <div class="drawer__handle" aria-hidden="true"></div>
+        <div class="drawer__head">
+          <h2 class="t-headline" id="filter-drawer-title">Filters</h2>
+          <button
+            class="icon-btn"
+            id="filter-drawer-close"
+            type="button"
+            aria-label="Close filters"
+          >
+            <span class="icon" aria-hidden="true">close</span>
+          </button>
+        </div>
+        <div id="filter-drawer-body"></div>
+      </div>
+    </div>
+
+    <!-- ── Toasts / live region ───────────────────────────────────────── -->
+    <div
+      class="toasts"
+      id="toasts"
+      role="status"
+      aria-live="polite"
+      aria-atomic="false"
+    ></div>
+    <p
+      class="visually-hidden"
+      id="route-announcer"
+      role="status"
+      aria-live="polite"
+    ></p>
+
+    <script src="js/config.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/store.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/views.js"></script>
+    <script src="js/router.js"></script>
+    <script src="js/app.js"></script>
+  </body>
+</html>
