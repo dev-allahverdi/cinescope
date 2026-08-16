@@ -4,7 +4,7 @@ A cinematic movie discovery web app for exploring trending, popular and upcoming
 
 Built with **HTML, CSS and Vanilla JavaScript**, powered by the **TMDB API**.
 
-🌐 **[Live Demo](https://allahverdi-dev.github.io/cinescope/)**
+🌐 **[Live Demo](https://dev-allahverdi.github.io/cinescope/)**
 
 > The app requires your own TMDB API key to load movie data. See [Run Locally](#-run-locally) for setup instructions.
 
@@ -163,7 +163,7 @@ CineScope uses TMDB for:
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/allahverdi-dev/cinescope.git
+git clone https://github.com/dev-allahverdi/cinescope.git
 ```
 
 Move into the project:
